@@ -11,6 +11,8 @@ Ambtion is a fast-paced, text-based multiplayer role-playing game.
 
 # Credits
 [Muhammad Nauman Raza](https://github.com/devraza) - Project Founder and Frontend Developer  
-[Abdulmujeeb Raji](https://github.com/midnadimple) - Backend Developer and Lore Writer
+[Abdulmujeeb Raji](https://github.com/midnadimple) - Backend Developer and Lore Suggester
+[Adam Khan](https://github.com/NightmaresStuff) - Epic guy
+
 # License
 See [LICENSE](/LICENSE) for a copy of the Apache License 2.0
