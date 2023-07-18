@@ -6,4 +6,5 @@ Go forth and realise your...
 |__|__|_|_|_|___|_|_| |_|___|_|_|
 ```                           
 
-A fast-paced, text-based multiplayer role-playing game.
+# About
+Ambtion is a fast-paced, text-based multiplayer role-playing game.
