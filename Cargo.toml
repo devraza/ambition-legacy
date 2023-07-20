@@ -1,0 +1,56 @@
+[package]
+name = "ambition-bevy"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[dependencies.bevy]
+version = "0.11.0"
+default-features = false
+features = [
+  # Some defaults
+  "bevy_asset",
+  "bevy_audio",
+  "bevy_gilrs",
+  "bevy_scene",
+  "bevy_winit",
+  "bevy_render",
+  "bevy_core_pipeline",
+  "bevy_sprite",
+  "bevy_text",
+  "bevy_ui",
+  "animation",
+  "tonemapping_luts",
+  "filesystem_watcher",
+  "android_shared_stdcxx",
+  "subpixel_glyph_atlas",
+  "bevy_dynamic_plugin",
+  # Misc. non-default features
+  "x11",
+  "ktx2",
+  "zstd",
+  # Media formats
+  "png",
+  "jpeg",
+  "flac",
+  # Tracing
+  "trace",
+
+  # Fast compiling
+  "dynamic_linking"
+]
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for code:
+[profile.dev.package."*"]
+opt-level = 3
+
+# Use nightly rust
+[toolchain]
+channel = "nightly"
