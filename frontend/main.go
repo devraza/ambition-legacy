@@ -23,6 +23,7 @@ type Game struct {
 	ui ebitenui.UI
 }
 
+// Function for UI initialization
 func uiInit() ebitenui.UI {
 	// The `hazakura` colorscheme
 	hazakura := make(map[string]color.RGBA)
@@ -79,6 +80,7 @@ func (g *Game) Update() error {
 
 // Draw implements Game
 func (g *Game) Draw(screen *ebiten.Image) {
+	// Draw the UI onto the screen
 	g.ui.Draw(screen)
 }
 
@@ -87,7 +89,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return outsideWidth, outsideHeight
 }
 
+// Main function
 func main() {
+	// Randomize window titles!
 	window_titles := []string{
 		"coding into the online cyberframe",
 		"seriously prideful",
@@ -97,11 +101,17 @@ func main() {
 	}
 	window_title := "Ambition: " + window_titles[rand.Intn(len(window_titles))]
 
+	// Engine setup
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle(window_title)
+
+	// Initialise the game
 	game := Game{
+		// Initialise the UI
 		ui: uiInit(),
 	}
+
+	// Log and exit on error
 	if err := ebiten.RunGame(&game); err != nil {
 		log.Fatal(err)
 	}
