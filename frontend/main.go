@@ -6,14 +6,18 @@ import (
 
 	// Logs
 	"log"
+	
+	"strconv"
 
 	// Ebitengine
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 // Create the `Game` struct
 type Game struct {
 	ui UI
+	activePlayer Player
 }
 
 const (
@@ -24,6 +28,7 @@ const (
 // Update implements Game
 func (g *Game) Update() error {
 	g.ui.base.Update()
+	g.activePlayer.update()
 	return nil
 }
 
@@ -31,6 +36,11 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw the UI onto the screen
 	g.ui.base.Draw(screen)
+	
+	ebitenutil.DebugPrintAt(screen, "health: " + strconv.Itoa(g.activePlayer.health), 0, 0)
+	ebitenutil.DebugPrintAt(screen, "level: " + strconv.Itoa(g.activePlayer.level), 0, 10)
+	ebitenutil.DebugPrintAt(screen, "exp: " + strconv.Itoa(int(g.activePlayer.exp)), 0, 20)
+	ebitenutil.DebugPrintAt(screen, "ambittion: " + strconv.Itoa(int(g.activePlayer.ambition)), 0, 30)
 }
 
 // Layout implements Game
@@ -53,11 +63,14 @@ func main() {
 	// Engine setup
 	ebiten.SetWindowSize(window_width, window_height)
 	ebiten.SetWindowTitle(window_title)
+	
+	testPlayer := initPlayer()
 
 	// Initialise the game
 	game := Game{
 		// Initialise the UI
 		ui: uiInit(window_width, window_height),
+		activePlayer: testPlayer,
 	}
 
 	// Log and exit on error
