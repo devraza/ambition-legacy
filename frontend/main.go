@@ -12,6 +12,9 @@ import (
 	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+// Initialise the test player
+var testPlayer = initPlayer()
+
 // Create the `Game` struct
 type Game struct {
 	ui           UI
@@ -58,14 +61,11 @@ func main() {
 	ebiten.SetWindowSize(window_width, window_height)
 	ebiten.SetWindowTitle(window_title)
 
-	// Initialise the test player
-	testPlayer := initPlayer()
-
 	// Initialise the game
 	game := Game{
 		// Initialise the UI
-		ui:           uiInit(window_width, window_height),
 		activePlayer: testPlayer,
+		ui:           uiInit(window_width, window_height),
 	}
 
 	// Log and exit on error

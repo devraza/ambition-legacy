@@ -6,7 +6,7 @@ import (
 	"image/color"
 
 	// String convert
-	// "strconv"
+	//"strconv"
 
 	// EbitenUI
 	"github.com/ebitenui/ebitenui"
@@ -35,8 +35,8 @@ var hazakura = map[string]color.RGBA{
 	"gray":       color.RGBA{0x27, 0x27, 0x2b, 0xff},
 	"light_gray": color.RGBA{0x45, 0x44, 0x49, 0xff},
 	"overlay":    color.RGBA{0x5c, 0x5c, 0x61, 0xff},
-	"highlight":  color.RGBA{0xd9, 0x0, 0xd7, 0xff},
-	"subwhite":   color.RGBA{0xec, 0xe5, 0xea, 0xff},
+	"subwhite":   color.RGBA{0xd9, 0x0, 0xd7, 0xff},
+	"white":      color.RGBA{0xec, 0xe5, 0xea, 0xff},
 
 	// Actual* colors
 	"red":     color.RGBA{0xf0, 0x69, 0x69, 0xff},
@@ -68,31 +68,31 @@ func uiInit(width, height int) UI {
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["dark_black"])),
 	)
 
-	// Set the heading size and font
-	heading_face, _ := makeFace(18, fonts.IosevkaBold_ttf)
+	// Make the different faces
+	headingFace, _ := makeFace(18, fonts.IosevkaBold_ttf)
+	defaultFace, _ := makeFace(14, fonts.IosevkaRegular_ttf)
 
 	tabProfile := widget.NewTabBookTab("Profile",
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
 		widget.ContainerOpts.Layout(widget.NewGridLayout(
 			//Define number of columns in the grid
 			widget.GridLayoutOpts.Columns(2),
-			widget.GridLayoutOpts.Spacing(10, 10),
-			//specify the Stretch for each row and column.
+			// Specify the Stretch for each row and column.
 			widget.GridLayoutOpts.Stretch([]bool{false, true}, nil),
+			// Define the spacing between items in the grid
+			widget.GridLayoutOpts.Spacing(20, 15),
+			// Define the padding in the grid
+			widget.GridLayoutOpts.Padding(widget.NewInsetsSimple(20)),
 		)),
 	)
-	// TODO(devraza): Show all of the player's stats
-	// health := widget.NewButton(
-	// 	widget.ButtonOpts.Text(strconv.Itoa(activePlayer.health), face, buttonTextColor),
-	// )
-	// tabProfile.AddChild(health)
+	makeStatsBars(tabProfile, ui, defaultFace)
 
 	tabInventory := widget.NewTabBookTab("Inventory",
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(color.NRGBA{0, 255, 0, 0xff})),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	inventoryButton := widget.NewText(
-		widget.TextOpts.Text("Inventory content", heading_face, color.Black),
+		widget.TextOpts.Text("Inventory content", headingFace, color.Black),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
@@ -106,7 +106,7 @@ func uiInit(width, height int) UI {
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	otherButton := widget.NewText(
-		widget.TextOpts.Text("Other content", heading_face, color.Black),
+		widget.TextOpts.Text("Other content", headingFace, color.Black),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
@@ -118,7 +118,7 @@ func uiInit(width, height int) UI {
 	// Create the tabbook widget
 	leftTabs := widget.NewTabBook(
 		widget.TabBookOpts.TabButtonImage(buttonImage),
-		widget.TabBookOpts.TabButtonText(heading_face, &widget.ButtonTextColor{Idle: color.White}),
+		widget.TabBookOpts.TabButtonText(headingFace, &widget.ButtonTextColor{Idle: color.White}),
 		widget.TabBookOpts.TabButtonSpacing(0),
 		widget.TabBookOpts.ContainerOpts(
 			widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
@@ -138,6 +138,7 @@ func uiInit(width, height int) UI {
 	// Define the left bar container
 	leftBar := widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	// Add the tabbook to the left bar
 	leftBar.AddChild(leftTabs)
@@ -150,6 +151,149 @@ func uiInit(width, height int) UI {
 	ui.base.Container = root
 
 	return ui
+}
+
+// Create progressbars for all the player stats
+func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
+	// Health
+	health := widget.NewText(
+		widget.TextOpts.Text("Health", face, ui.colors["white"]),
+		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.GridLayoutData{
+			HorizontalPosition: widget.GridLayoutPositionStart,
+		})),
+	)
+	health_progressbar := widget.NewProgressBar(
+		widget.ProgressBarOpts.WidgetOpts(
+			// Set the required anchor layout data to determine where in the container to place the progressbar
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+			// Set the minimum size for the progressbar.
+			widget.WidgetOpts.MinSize(200, 20),
+		),
+		widget.ProgressBarOpts.Images(
+			// Set the track colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["black"]),
+				Hover: image.NewNineSliceColor(ui.colors["black"]),
+			},
+			// Set the progress colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["red"]),
+				Hover: image.NewNineSliceColor(ui.colors["red"]),
+			},
+		),
+		// Set the min, max, and current values for each progressbar
+		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health),
+	)
+	parent.AddChild(health)
+	parent.AddChild(health_progressbar)
+
+	// Defence
+	defence := widget.NewText(
+		widget.TextOpts.Text("Defence", face, ui.colors["white"]),
+		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.GridLayoutData{
+			HorizontalPosition: widget.GridLayoutPositionStart,
+		})),
+	)
+	defence_progressbar := widget.NewProgressBar(
+		widget.ProgressBarOpts.WidgetOpts(
+			// Set the required anchor layout data to determine where in the container to place the progressbar
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+			// Set the minimum size for the progressbar.
+			widget.WidgetOpts.MinSize(200, 20),
+		),
+		widget.ProgressBarOpts.Images(
+			// Set the track colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["black"]),
+				Hover: image.NewNineSliceColor(ui.colors["black"]),
+			},
+			// Set the progress colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["yellow"]),
+				Hover: image.NewNineSliceColor(ui.colors["yellow"]),
+			},
+		),
+		// Set the min, max, and current values for each progressbar
+		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health),
+	)
+	parent.AddChild(defence)
+	parent.AddChild(defence_progressbar)
+
+	// XP/Level
+	level := widget.NewText(
+		widget.TextOpts.Text("Level", face, ui.colors["white"]),
+		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.GridLayoutData{
+			HorizontalPosition: widget.GridLayoutPositionStart,
+		})),
+	)
+	level_progressbar := widget.NewProgressBar(
+		widget.ProgressBarOpts.WidgetOpts(
+			// Set the required anchor layout data to determine where in the container to place the progressbar
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+			// Set the minimum size for the progressbar.
+			widget.WidgetOpts.MinSize(200, 20),
+		),
+		widget.ProgressBarOpts.Images(
+			// Set the track colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["black"]),
+				Hover: image.NewNineSliceColor(ui.colors["black"]),
+			},
+			// Set the progress colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["cyan"]),
+				Hover: image.NewNineSliceColor(ui.colors["cyan"]),
+			},
+		),
+		// Set the min, max, and current values for each progressbar
+		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health_max),
+	)
+	parent.AddChild(level)
+	parent.AddChild(level_progressbar)
+
+	// Ambition
+	ambition := widget.NewText(
+		widget.TextOpts.Text("Ambition", face, ui.colors["white"]),
+		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.GridLayoutData{
+			HorizontalPosition: widget.GridLayoutPositionStart,
+		})),
+	)
+	ambition_progressbar := widget.NewProgressBar(
+		widget.ProgressBarOpts.WidgetOpts(
+			// Set the required anchor layout data to determine where in the container to place the progressbar
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+			// Set the minimum size for the progressbar.
+			widget.WidgetOpts.MinSize(200, 20),
+		),
+		widget.ProgressBarOpts.Images(
+			// Set the track colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["black"]),
+				Hover: image.NewNineSliceColor(ui.colors["black"]),
+			},
+			// Set the progress colors
+			&widget.ProgressBarImage{
+				Idle:  image.NewNineSliceColor(ui.colors["purple"]),
+				Hover: image.NewNineSliceColor(ui.colors["purple"]),
+			},
+		),
+		// Set the min, max, and current values for each progressbar
+		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health),
+	)
+	parent.AddChild(ambition)
+	parent.AddChild(ambition_progressbar)
 }
 
 // Load a button image
