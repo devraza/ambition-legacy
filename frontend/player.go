@@ -5,7 +5,8 @@ import ()
 // The player struct
 type Player struct {
 	health       int
-	defense      int
+	health_max   int
+	defence      int
 	level        int
 	exp          float32
 	ambition     float32
@@ -20,6 +21,8 @@ var level_ambition = make(map[int]float32)
 func initPlayer() Player {
 	return Player{
 		health:       100,
+		health_max:   100,
+		defence:      0,
 		level:        1,
 		exp:          0.0,
 		ambition:     0.0,               // NOTE(midnadimple): In the future this will be affected by player activity
