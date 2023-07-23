@@ -19,6 +19,7 @@ import (
 	"golang.org/x/image/font"
 )
 
+// The UI struct
 type UI struct {
 	base          ebitenui.UI
 	colors        map[string]color.RGBA
@@ -67,8 +68,8 @@ func uiInit(width, height int) UI {
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["dark_black"])),
 	)
 
-	// Load the text font
-	face, _ := loadFont(10)
+	// Set the heading size and font
+	heading_face, _ := makeFace(18, fonts.IosevkaBold_ttf)
 
 	tabProfile := widget.NewTabBookTab("Profile",
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
@@ -91,7 +92,7 @@ func uiInit(width, height int) UI {
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	inventoryButton := widget.NewText(
-		widget.TextOpts.Text("Inventory content", face, color.Black),
+		widget.TextOpts.Text("Inventory content", heading_face, color.Black),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
@@ -105,7 +106,7 @@ func uiInit(width, height int) UI {
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	otherButton := widget.NewText(
-		widget.TextOpts.Text("Other content", face, color.Black),
+		widget.TextOpts.Text("Other content", heading_face, color.Black),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
@@ -117,7 +118,7 @@ func uiInit(width, height int) UI {
 	// Create the tabbook widget
 	leftTabs := widget.NewTabBook(
 		widget.TabBookOpts.TabButtonImage(buttonImage),
-		widget.TabBookOpts.TabButtonText(face, &widget.ButtonTextColor{Idle: color.White}),
+		widget.TabBookOpts.TabButtonText(heading_face, &widget.ButtonTextColor{Idle: color.White}),
 		widget.TabBookOpts.TabButtonSpacing(0),
 		widget.TabBookOpts.ContainerOpts(
 			widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
@@ -151,6 +152,7 @@ func uiInit(width, height int) UI {
 	return ui
 }
 
+// Load a button image
 func loadButtonImage() (*widget.ButtonImage, error) {
 	idle := image.NewNineSliceColor(hazakura["black"])
 	hover := image.NewNineSliceColor(hazakura["light_gray"])
@@ -167,8 +169,9 @@ func loadButtonImage() (*widget.ButtonImage, error) {
 	}, nil
 }
 
-func loadFont(size float64) (font.Face, error) {
-	ttfFont, err := truetype.Parse(fonts.IosevkaBold_ttf)
+// Function to create a face providing font size and file (from assets)
+func makeFace(size float64, fontfile []byte) (font.Face, error) {
+	ttfFont, err := truetype.Parse(fontfile)
 	if err != nil {
 		return nil, err
 	}
