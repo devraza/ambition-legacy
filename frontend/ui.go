@@ -6,7 +6,7 @@ import (
 	"image/color"
 
 	// String convert
-	"strconv"
+	// "strconv"
 
 	// EbitenUI
 	"github.com/ebitenui/ebitenui"
@@ -84,7 +84,7 @@ func uiInit(width, height int) UI {
 	// health := widget.NewButton(
 	// 	widget.ButtonOpts.Text(strconv.Itoa(activePlayer.health), face, buttonTextColor),
 	// )
-	tabProfile.AddChild(health)
+	// tabProfile.AddChild(health)
 
 	tabInventory := widget.NewTabBookTab("Inventory",
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(color.NRGBA{0, 255, 0, 0xff})),
