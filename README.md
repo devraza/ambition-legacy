@@ -3,7 +3,7 @@
 # Ambition
 
 ## About
-Ambtion is a fast-paced, text-based multiplayer role-playing game.
+Ambition is a fast-paced, text-based multiplayer role-playing game.
 
 ## Credits
 - [Muhammad Nauman Raza](https://github.com/devraza) - Project Manager/Founder, Producer, and Programmer
