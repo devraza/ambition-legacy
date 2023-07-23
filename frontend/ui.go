@@ -72,6 +72,7 @@ func uiInit(width, height int) UI {
 	headingFace, _ := makeFace(18, fonts.IosevkaBold_ttf)
 	defaultFace, _ := makeFace(14, fonts.IosevkaRegular_ttf)
 
+	// Create the 'Profile' tab
 	tabProfile := widget.NewTabBookTab("Profile",
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
 		widget.ContainerOpts.Layout(widget.NewGridLayout(
@@ -85,14 +86,16 @@ func uiInit(width, height int) UI {
 			widget.GridLayoutOpts.Padding(widget.NewInsetsSimple(20)),
 		)),
 	)
+	// Add the player stats as content for the 'profile' tab
 	makeStatsBars(tabProfile, ui, defaultFace)
 
+	// Create the 'Inventory' tab
 	tabInventory := widget.NewTabBookTab("Inventory",
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(color.NRGBA{0, 255, 0, 0xff})),
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	inventoryButton := widget.NewText(
-		widget.TextOpts.Text("Inventory content", headingFace, color.Black),
+		widget.TextOpts.Text("Placeholder", headingFace, ui.colors["white"]),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
@@ -101,12 +104,13 @@ func uiInit(width, height int) UI {
 	)
 	tabInventory.AddChild(inventoryButton)
 
+	// Create the 'Other' tab
 	tabOther := widget.NewTabBookTab("Other",
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(color.NRGBA{0, 255, 0, 0xff})),
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	otherButton := widget.NewText(
-		widget.TextOpts.Text("Other content", headingFace, color.Black),
+		widget.TextOpts.Text("Placeholder", headingFace, ui.colors["white"]),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
