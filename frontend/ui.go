@@ -5,8 +5,8 @@ import (
 	img "image"
 	"image/color"
 
-	// String convert
-	//"strconv"
+	// Misc.
+	// "fmt"
 
 	// EbitenUI
 	"github.com/ebitenui/ebitenui"
@@ -147,6 +147,55 @@ func uiInit(width, height int) UI {
 	// Add the tabbook to the left bar
 	leftBar.AddChild(leftTabs)
 
+	// Define the contents of the chat window
+	chatContainer := widget.NewContainer(
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["black"])),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
+	)
+	chatContainer.AddChild(widget.NewText(
+		widget.TextOpts.Text("Placeholder", defaultFace, ui.colors["white"]),
+		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+			HorizontalPosition: widget.AnchorLayoutPositionCenter,
+			VerticalPosition:   widget.AnchorLayoutPositionCenter,
+		})),
+	))
+	// Define the titlebar for the window
+	chatTitleContainer := widget.NewContainer(
+		// Set the background color of the titlebar
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["overlay"])),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
+	)
+	chatTitleContainer.AddChild(widget.NewText(
+		widget.TextOpts.Text("Chat", headingFace, ui.colors["white"]),
+		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+			HorizontalPosition: widget.AnchorLayoutPositionCenter,
+			VerticalPosition:   widget.AnchorLayoutPositionCenter,
+		})),
+	))
+
+	// Define the chat window
+	chat := widget.NewWindow(
+		// Set the contents of the window
+		widget.WindowOpts.Contents(chatContainer),
+		// Set the titlebar for the window
+		widget.WindowOpts.TitleBar(chatTitleContainer, 25),
+		//Set the window above everything else and block input elsewhere
+		widget.WindowOpts.Modal(),
+		// Set how to close the window. CLICK_OUT will close the window when clicking anywhere
+		widget.WindowOpts.CloseMode(widget.CLICK_OUT),
+		// Make the window draggable
+		widget.WindowOpts.Draggable(),
+		// Make the window resizeable
+		widget.WindowOpts.Resizeable(),
+		// Set the minimum size of the window
+		widget.WindowOpts.MinSize(int(float32(width)/3.6), int(float32(height)/3.5)),
+		// Set the maximum size of the window
+		widget.WindowOpts.MaxSize(width/2, height/2),
+	)
+	// Place the window and add the window to the UI
+	showWindow(chat, ui, float32(width)-float32(width)/3.6, float32(height)-float32(height)/3.5)
+	ui.base.AddWindow(chat)
+
 	// Set the position and size of the left bar
 	leftBar.SetLocation(img.Rect(0, 0, int(float32(width)/3.5), height))
 	// Add the left bar to the root container
@@ -155,6 +204,19 @@ func uiInit(width, height int) UI {
 	ui.base.Container = root
 
 	return ui
+}
+
+// Set a window's location and open the window
+func showWindow(window *widget.Window, ui UI, v float32, h float32) {
+	// Get the preferred size of the content
+	x, y := window.Contents.PreferredSize()
+	// Create a rect with the preferred size of the content
+	r := img.Rect(0, 0, x, y)
+	// Use the Add method to move the window to the specified point
+	r = r.Add(img.Point{int(v), int(h)})
+	// Set the windows location to the rect
+	window.SetLocation(r)
+
 }
 
 // Create progressbars for all the player stats
