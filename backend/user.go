@@ -1,10 +1,12 @@
 package main
 
 import (
+	// The standard stuff
 	"errors"
 	"fmt"
 	"io"
 
+	// Encryption
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -14,31 +16,39 @@ import (
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 
+	// SQL databasing
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Define the user handler struct
 type UserHandler struct {
 	db         *sql.DB
 	jwt_secret *ecdsa.PrivateKey
 }
 
+// Define the user request struct
 type UserRequest struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
 }
 
+// Define the function to create user handlers
 func NewUserHandler() (*UserHandler, error) {
+	// Initialise the database using the database file
 	db, err := sql.Open("sqlite3", "users.db")
 	if err != nil {
 		return nil, err
 	}
 
+	// Define the JSON web token
 	jwt_secret, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	// Return any errors
 	if err != nil {
 		return nil, err
 	}
 
+	// Return the user handler struct
 	return &UserHandler{
 		db:         db,
 		jwt_secret: jwt_secret,
@@ -53,6 +63,7 @@ func (h *UserHandler) Handle(res http.ResponseWriter, req *http.Request) {
 		h.updateUser(res, req)
 	case "DELETE":
 		h.deleteUser(res, req)
+	// Return an error message should an invalid method be used
 	default:
 		http.Error(res, "Only POST, PUT, and DELETE are valid methods", http.StatusMethodNotAllowed)
 	}
@@ -78,14 +89,14 @@ func (h *UserHandler) createUser(res http.ResponseWriter, req *http.Request) {
 	password := []byte(user_request.Password)
 
 	// Password checks
-	// -------------------
 	row := h.db.QueryRow("SELECT pwdhash FROM users WHERE name=?", name)
 	var db_pwdhash string
 
 	if err = row.Scan(&db_pwdhash); err != nil {
-		// If no user found with name, create the user
+		// If no user is found with the requested name, create the user
 		if errors.Is(err, sql.ErrNoRows) {
 			pwdhash_bytes, err := bcrypt.GenerateFromPassword(password, 12)
+			// Log any errors
 			if err != nil {
 				http.Error(res, fmt.Sprintf("user: failed to generate password hash (%s)", err), http.StatusInternalServerError)
 				return
