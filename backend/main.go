@@ -2,37 +2,39 @@ package main
 
 import (
 	"log"
-	"net"
+	"net/http"
 	"os"
 )
 
-const (
-	serverAddress = "localhost:7764"
-)
+type App struct {
+	UserHandler *UserHandler
+}
 
-func main() {
-	log.Println("Ambition going strong at", serverAddress)
-
-	listener, err := net.Listen("tcp", serverAddress)
-	if err != nil {
-		log.Fatalln("Failed to initialise TCP listener", err)
-	}
-	defer listener.close()
-
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			log.Println("Failed to accept connection:", err)
-			continue
-		}
-
-		// Concurrency FTW
-		go handleConnection(conn)
+func (h *App) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+	var head string
+	head, req.URL.Path = ShiftPath(req.URL.Path)
+	switch head {
+	case "user":
+		h.UserHandler.Handle(res, req)
+	default:
+		http.Error(res, "Not Found", http.StatusNotFound)
 	}
 }
 
-func handleConnection(conn net.Conn) {
-	defer conn.Close()
+func main() {
+	user_handler, err := NewUserHandler()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-	// TODO implement actual server. Waiting on frontend for this
+	a := &App{
+		UserHandler: user_handler,
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "7741"
+	}
+	log.Println("Ambition going strong at port 7741")
+	http.ListenAndServe(":"+port, a)
 }
