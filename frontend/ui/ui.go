@@ -165,42 +165,12 @@ func UiInit(width, height int) UI {
 			VerticalPosition:   widget.AnchorLayoutPositionCenter,
 		})),
 	))
-	// Define the titlebar for the window
-	chatTitleContainer := widget.NewContainer(
-		// Set the background color of the titlebar
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["black"])),
-		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
-	)
-	chatTitleContainer.AddChild(widget.NewText(
-		widget.TextOpts.Text("Chat", headingFace, ui.colors["white"]),
-		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-			HorizontalPosition: widget.AnchorLayoutPositionCenter,
-			VerticalPosition:   widget.AnchorLayoutPositionCenter,
-		})),
-	))
-
-	// Define the chat window
-	chat := widget.NewWindow(
-		// Set the contents of the window
-		widget.WindowOpts.Contents(chatContainer),
-		// Set the titlebar for the window
-		widget.WindowOpts.TitleBar(chatTitleContainer, 25),
-		//Set the window above everything else and block input elsewhere
-		widget.WindowOpts.Modal(),
-		// Set how to close the window. CLICK_OUT will close the window when clicking anywhere
-		widget.WindowOpts.CloseMode(widget.CLICK_OUT),
-		// Make the window draggable
-		widget.WindowOpts.Draggable(),
-		// Make the window resizeable
-		widget.WindowOpts.Resizeable(),
-		// Set the minimum size of the window
-		widget.WindowOpts.MinSize(int(float32(width)/3.5), int(float32(height)/3.5)),
-		// Set the maximum size of the window
-		widget.WindowOpts.MaxSize(width/2, height/2),
-	)
-	// Place the window and add the window to the UI
-	showWindow(chat, ui, 0, float32(height)-float32(height)/3.5)
-	ui.Base.AddWindow(chat)
+	chatDimensionX, chatDimensionY := int(float32(width)/3.5), int(float32(height)/3)
+	chat := img.Rect(0, 0, chatDimensionX, chatDimensionY)
+	chat = chat.Add(img.Point{0, height - chatDimensionY})
+	// Set the position and size of the chat window
+	chatContainer.SetLocation(chat)
+	leftBar.AddChild(chatContainer)
 
 	// Set the position and size of the left bar
 	leftBar.SetLocation(img.Rect(0, 0, int(float32(width)/3.5), height))
