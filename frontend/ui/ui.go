@@ -75,8 +75,8 @@ func UiInit(width, height int) UI {
 	)
 
 	// Make the different faces
-	headingFace, _ := makeFace(18, fonts.IosevkaBold_ttf)
-	defaultFace, _ := makeFace(14, fonts.IosevkaRegular_ttf)
+	headingFace, _ := makeFace(18, fonts.FiraBold_ttf)
+	defaultFace, _ := makeFace(14, fonts.FiraRegular_ttf)
 
 	// Create the 'Profile' tab
 	tabProfile := widget.NewTabBookTab("Profile",
