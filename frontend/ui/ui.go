@@ -168,7 +168,7 @@ func UiInit(width, height int) UI {
 	// Define the titlebar for the window
 	chatTitleContainer := widget.NewContainer(
 		// Set the background color of the titlebar
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["overlay"])),
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["black"])),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	chatTitleContainer.AddChild(widget.NewText(
@@ -194,12 +194,12 @@ func UiInit(width, height int) UI {
 		// Make the window resizeable
 		widget.WindowOpts.Resizeable(),
 		// Set the minimum size of the window
-		widget.WindowOpts.MinSize(int(float32(width)/3.6), int(float32(height)/3.5)),
+		widget.WindowOpts.MinSize(int(float32(width)/3.5), int(float32(height)/3.5)),
 		// Set the maximum size of the window
 		widget.WindowOpts.MaxSize(width/2, height/2),
 	)
 	// Place the window and add the window to the UI
-	showWindow(chat, ui, float32(width)-float32(width)/3.6, float32(height)-float32(height)/3.5)
+	showWindow(chat, ui, 0, float32(height)-float32(height)/3.5)
 	ui.Base.AddWindow(chat)
 
 	// Set the position and size of the left bar
