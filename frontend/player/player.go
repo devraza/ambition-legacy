@@ -1,16 +1,17 @@
-package main
+package player
 
 import ()
 
 // The player struct
 type Player struct {
-	health       int
-	health_max   int
-	defence      int
-	level        int
-	exp          float32
-	ambition     float32
-	ambition_max float32
+	Health      int
+	MaxHealth   int
+	Defence     int
+	Level       int
+	Exp         float32
+	NextExp     float32
+	Ambition    float32
+	MaxAmbition float32
 }
 
 // Create the maps for the level/(max) ambition gates
@@ -18,15 +19,16 @@ var level_gates = make(map[int]float32)
 var level_ambition = make(map[int]float32)
 
 // TODO(midnadimple): Move player initialization to server upon login
-func initPlayer() Player {
+func GetPlayer() Player {
 	return Player{
-		health:       100,
-		health_max:   100,
-		defence:      0,
-		level:        1,
-		exp:          0.0,
-		ambition:     0.0,               // NOTE(midnadimple): In the future this will be affected by player activity
-		ambition_max: level_ambition[1], // NOTE(midnadimple): In the future this will be affected by player activity
+		Health:      100,
+		MaxHealth:   100,
+		Defence:     0,
+		Level:       1,
+		Exp:         0.0,
+		NextExp:     0.0,
+		Ambition:    0.0,               // NOTE(midnadimple): In the future this will be affected by player activity
+		MaxAmbition: level_ambition[1], // NOTE(midnadimple): In the future this will be affected by player activity
 	}
 }
 
@@ -37,7 +39,7 @@ func gain(basexp float32, modifier float32) float32 {
 }
 
 // Update the player
-func (p *Player) update() {
+func (p *Player) Update() {
 	// TODO(midnadimple): update health upon damage
 
 	// Auto-generate the level gates
@@ -70,10 +72,13 @@ func (p *Player) update() {
 		}
 	}
 
+	// Set the XP needed for the player to reach the next level
+	p.NextExp = level_gates[p.Level]
+
 	// Set the XP to 0 and increase both the level and max ambition on level up
-	if p.exp >= level_gates[p.level] {
-		p.exp = 0.0
-		p.level += 1
-		p.ambition_max = level_ambition[p.level]
+	if p.Exp >= level_gates[p.Level] {
+		p.Exp = 0.0
+		p.Level += 1
+		p.MaxAmbition = level_ambition[p.Level]
 	}
 }
