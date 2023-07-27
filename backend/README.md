@@ -8,8 +8,5 @@ and initialize it with the `sql/init.sql` script:
 $ cat sql/init.sql | sqlite3 users.db
 ```
 
-You also need to have a `.env` file in this folder, with the following options specified
-
-- JWT_SECRET: Used to encrypt tokens for user auth. Must be provided. Should
-be cryptographically secure
-- PORT: Optionally replace the default port of 7741
+You can optionally provide the `PORT` environment variable to override the
+default port of 7741
