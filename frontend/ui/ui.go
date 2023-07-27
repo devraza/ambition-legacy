@@ -1,4 +1,4 @@
-package main
+package ui
 
 import (
 	// Image-related packages
@@ -8,23 +8,29 @@ import (
 	// Misc.
 	// "fmt"
 
+	// Ambition
+	p "github.com/devraza/ambition/frontend/player"
+
 	// EbitenUI
 	"github.com/ebitenui/ebitenui"
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
 
 	// Fonts
-	"github.com/devraza/ambition/assets/fonts"
+	"github.com/devraza/ambition/frontend/assets/fonts"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
 )
 
 // The UI struct
 type UI struct {
-	base          ebitenui.UI
+	Base          ebitenui.UI
 	colors        map[string]color.RGBA
 	width, height int
 }
+
+// Get the player from the `player` package
+var player = p.GetPlayer()
 
 // The `hazakura` colorscheme (default)
 var hazakura = map[string]color.RGBA{
@@ -49,7 +55,7 @@ var hazakura = map[string]color.RGBA{
 }
 
 // Function for UI initialization
-func uiInit(width, height int) UI {
+func UiInit(width, height int) UI {
 	var ui UI
 
 	// Define the UI colors
@@ -194,14 +200,14 @@ func uiInit(width, height int) UI {
 	)
 	// Place the window and add the window to the UI
 	showWindow(chat, ui, float32(width)-float32(width)/3.6, float32(height)-float32(height)/3.5)
-	ui.base.AddWindow(chat)
+	ui.Base.AddWindow(chat)
 
 	// Set the position and size of the left bar
 	leftBar.SetLocation(img.Rect(0, 0, int(float32(width)/3.5), height))
 	// Add the left bar to the root container
 	root.AddChild(leftBar)
 
-	ui.base.Container = root
+	ui.Base.Container = root
 
 	return ui
 }
@@ -251,45 +257,10 @@ func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
 			},
 		),
 		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health),
+		widget.ProgressBarOpts.Values(0, player.Health, player.MaxHealth),
 	)
 	parent.AddChild(health)
 	parent.AddChild(health_progressbar)
-
-	// Defence
-	defence := widget.NewText(
-		widget.TextOpts.Text("Defence", face, ui.colors["white"]),
-		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.GridLayoutData{
-			HorizontalPosition: widget.GridLayoutPositionStart,
-		})),
-	)
-	defence_progressbar := widget.NewProgressBar(
-		widget.ProgressBarOpts.WidgetOpts(
-			// Set the required anchor layout data to determine where in the container to place the progressbar
-			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-				HorizontalPosition: widget.AnchorLayoutPositionCenter,
-				VerticalPosition:   widget.AnchorLayoutPositionCenter,
-			}),
-			// Set the minimum size for the progressbar.
-			widget.WidgetOpts.MinSize(200, 20),
-		),
-		widget.ProgressBarOpts.Images(
-			// Set the track colors
-			&widget.ProgressBarImage{
-				Idle:  image.NewNineSliceColor(ui.colors["black"]),
-				Hover: image.NewNineSliceColor(ui.colors["black"]),
-			},
-			// Set the progress colors
-			&widget.ProgressBarImage{
-				Idle:  image.NewNineSliceColor(ui.colors["yellow"]),
-				Hover: image.NewNineSliceColor(ui.colors["yellow"]),
-			},
-		),
-		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health),
-	)
-	parent.AddChild(defence)
-	parent.AddChild(defence_progressbar)
 
 	// XP/Level
 	level := widget.NewText(
@@ -321,7 +292,7 @@ func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
 			},
 		),
 		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health_max),
+		widget.ProgressBarOpts.Values(0, int(player.Exp), int(player.NextExp)),
 	)
 	parent.AddChild(level)
 	parent.AddChild(level_progressbar)
@@ -356,7 +327,7 @@ func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
 			},
 		),
 		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, testPlayer.health, testPlayer.health),
+		widget.ProgressBarOpts.Values(0, int(player.Ambition), int(player.MaxAmbition)),
 	)
 	parent.AddChild(ambition)
 	parent.AddChild(ambition_progressbar)
