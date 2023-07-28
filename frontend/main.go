@@ -1,13 +1,13 @@
 package main
 
 import (
-	// Random
+	// Misc.
+	"log"
 	"math/rand"
 
-	// Logs
-	"log"
-	
-	"strconv"
+	// Ambition
+	p "github.com/devraza/ambition/frontend/player"
+	u "github.com/devraza/ambition/frontend/ui"
 
 	// Ebitengine
 	"github.com/hajimehoshi/ebiten/v2"
@@ -15,12 +15,12 @@ import (
 )
 
 // Initialise the test player
-var testPlayer = initPlayer()
+var testPlayer = p.GetPlayer()
 
 // Create the `Game` struct
 type Game struct {
-	ui           UI
-	activePlayer Player
+	ui           u.UI
+	activePlayer p.Player
 }
 
 // Define the window width/height
@@ -31,15 +31,15 @@ const (
 
 // Update implements Game
 func (g *Game) Update() error {
-	g.ui.base.Update()
-	g.activePlayer.update()
+	g.ui.Base.Update()
+	g.activePlayer.Update()
 	return nil
 }
 
 // Draw implements Game
 func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw the UI onto the screen
-	g.ui.base.Draw(screen)
+	g.ui.Base.Draw(screen)
 }
 
 // Layout implements Game
@@ -62,14 +62,12 @@ func main() {
 	// Engine setup
 	ebiten.SetWindowSize(window_width, window_height)
 	ebiten.SetWindowTitle(window_title)
-	
-	testPlayer := initPlayer()
 
 	// Initialise the game
 	game := Game{
 		// Initialise the UI
 		activePlayer: testPlayer,
-		ui:           uiInit(window_width, window_height),
+		ui:           u.UiInit(window_width, window_height),
 	}
 
 	// Log and exit on error
