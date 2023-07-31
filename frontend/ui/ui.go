@@ -5,9 +5,6 @@ import (
 	img "image"
 	"image/color"
 
-	// Misc.
-	// "fmt"
-
 	// Ambition
 	p "github.com/devraza/ambition/frontend/player"
 
@@ -27,6 +24,7 @@ type UI struct {
 	Base          ebitenui.UI
 	colors        map[string]color.RGBA
 	width, height int
+	textInput     *widget.TextInput
 }
 
 // Get the player from the `player` package
@@ -35,7 +33,7 @@ var player = p.GetPlayer()
 // The `hazakura` colorscheme (default)
 var hazakura = map[string]color.RGBA{
 	// The monotone colors
-	"dark_black": color.RGBA{0x0f, 0x0f, 0x0d, 0xff},
+	"dark_black": color.RGBA{0x0d, 0x0d, 0x0f, 0xff},
 	"black":      color.RGBA{0x15, 0x15, 0x17, 0xff},
 	"dark_gray":  color.RGBA{0x24, 0x24, 0x26, 0xff},
 	"gray":       color.RGBA{0x27, 0x27, 0x2b, 0xff},
@@ -54,15 +52,19 @@ var hazakura = map[string]color.RGBA{
 	"yellow":  color.RGBA{0xd9, 0xd5, 0x64, 0xff},
 }
 
+var ui UI
+
+// Make the different faces
+var headingFace, _ = makeFace(18, fonts.FiraBold_ttf)
+var defaultFace, _ = makeFace(14, fonts.FiraRegular_ttf)
+
+// Load the images for the button states
+var buttonImage, _ = loadButtonImage()
+
 // Function for UI initialization
 func UiInit(width, height int) UI {
-	var ui UI
-
 	// Define the UI colors
 	ui.colors = hazakura
-
-	// Load the images for the button states
-	buttonImage, _ := loadButtonImage()
 
 	// Get the window width/height
 	ui.width = width
@@ -73,10 +75,6 @@ func UiInit(width, height int) UI {
 		// Define the plain color to be used as a default background
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["dark_black"])),
 	)
-
-	// Make the different faces
-	headingFace, _ := makeFace(18, fonts.FiraBold_ttf)
-	defaultFace, _ := makeFace(14, fonts.FiraRegular_ttf)
 
 	// Create the 'Profile' tab
 	tabProfile := widget.NewTabBookTab("Profile",
@@ -156,34 +154,56 @@ func UiInit(width, height int) UI {
 	// Define the contents of the chat window
 	chatContainer := widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["black"])),
-		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
+			widget.AnchorLayoutOpts.Padding(widget.NewInsetsSimple(20)),
+		)),
 	)
 	chatContainer.AddChild(widget.NewText(
-		widget.TextOpts.Text("Placeholder", defaultFace, ui.colors["white"]),
+		widget.TextOpts.Text("Chat", headingFace, ui.colors["blue"]),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-			HorizontalPosition: widget.AnchorLayoutPositionCenter,
-			VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			HorizontalPosition: widget.AnchorLayoutPositionStart,
+			VerticalPosition:   widget.AnchorLayoutPositionStart,
 		})),
 	))
-	chatDimensionX, chatDimensionY := int(float32(width)/3.5), int(float32(height)/3)
-	chat := img.Rect(0, 0, chatDimensionX, chatDimensionY)
-	chat = chat.Add(img.Point{0, height - chatDimensionY})
-	// Set the position and size of the chat window
-	chatContainer.SetLocation(chat)
-	leftBar.AddChild(chatContainer)
+	// Place and show the chat container
+	placeContainer(chatContainer, int(float32(ui.width)/3.5), int(float32(ui.height)/3.3), img.Point{0, ui.height - int(float32(ui.height)/3.3)})
+	addContainer(leftBar, chatContainer)
+
+	// Create the login window
+	makeLoginWindow(ui.width, ui.height, root, leftBar)
 
 	// Set the position and size of the left bar
 	leftBar.SetLocation(img.Rect(0, 0, int(float32(width)/3.5), height))
 	// Add the left bar to the root container
-	root.AddChild(leftBar)
+	//root.AddChild(leftBar)
 
+	// Set the base container to be the root container
 	ui.Base.Container = root
 
 	return ui
 }
 
+// Set the size/location of a container
+func placeContainer(container *widget.Container, x int, y int, vector img.Point) {
+	DimensionX, DimensionY := x, y
+	placement := img.Rect(0, 0, DimensionX, DimensionY)
+	placement = placement.Add(vector)
+	// Set the position and size of the container
+	container.SetLocation(placement)
+}
+
+// Add a container to a parent container
+func addContainer(parent *widget.Container, child *widget.Container) {
+	parent.AddChild(child)
+}
+
+// Hide a container
+func removeContainer(parent *widget.Container, child *widget.Container) {
+	parent.RemoveChild(child)
+}
+
 // Set a window's location and open the window
-func showWindow(window *widget.Window, ui UI, v float32, h float32) {
+func showWindow(window *widget.Window, v float32, h float32) {
 	// Get the preferred size of the content
 	x, y := window.Contents.PreferredSize()
 	// Create a rect with the preferred size of the content
@@ -192,7 +212,6 @@ func showWindow(window *widget.Window, ui UI, v float32, h float32) {
 	r = r.Add(img.Point{int(v), int(h)})
 	// Set the windows location to the rect
 	window.SetLocation(r)
-
 }
 
 // Create progressbars for all the player stats
