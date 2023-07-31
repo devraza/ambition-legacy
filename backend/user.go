@@ -55,7 +55,7 @@ func NewUserHandler() (*UserHandler, error) {
 	jwt_secret_str := os.Getenv("JWT_SECRET")
 	// Return any errors
 	if jwt_secret_str == "" {
-		return nil, err
+		return nil, errors.New("no JWT_SECRET provided in .env")
 	}
 	jwt_secret := []byte(jwt_secret_str)
 
