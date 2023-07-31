@@ -8,5 +8,9 @@ and initialize it with the `sql/init.sql` script:
 $ cat sql/init.sql | sqlite3 users.db
 ```
 
-You can optionally provide the `PORT` environment variable to override the
-default port of `7741`
+You also need to create a `.env` file with the following variables:
+
+- `JWT_SECRET`: Required. A cryptographically secure string used to encode
+tokens.
+- `PORT`: Optional. Overrides the default port of `7741`
+
