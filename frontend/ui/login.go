@@ -1,21 +1,18 @@
 package ui
 
 import (
-	// Misc.
-	"fmt"
-
 	// Image
 	img "image"
 
 	// Ambition
-	// p "github.com/devraza/ambition/frontend/player"
+	p "github.com/devraza/ambition/frontend/player"
 
 	// EbitenUI
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
 )
 
-func makeLoginWindow(width, height int, root *widget.Container, shown *widget.Container) {
+func makeLoginWindow(width, height int, root *widget.Container, shown *widget.Container, player *p.Player) {
 	// Define the contents of the login window
 	loginContainer := widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.colors["gray"])),
@@ -62,9 +59,6 @@ func makeLoginWindow(width, height int, root *widget.Container, shown *widget.Co
 			widget.CaretOpts.Size(defaultFace, 2),
 		),
 		widget.TextInputOpts.Placeholder("Username"),
-		widget.TextInputOpts.SubmitHandler(func(args *widget.TextInputChangedEventArgs) {
-			fmt.Println("Text Submitted: ", args.InputText)
-		}),
 	)
 	passwordInput := widget.NewTextInput(
 		widget.TextInputOpts.WidgetOpts(
@@ -91,9 +85,6 @@ func makeLoginWindow(width, height int, root *widget.Container, shown *widget.Co
 		widget.TextInputOpts.Secure(true),
 
 		widget.TextInputOpts.Placeholder("Password"),
-		widget.TextInputOpts.SubmitHandler(func(args *widget.TextInputChangedEventArgs) {
-			fmt.Println("Text Submitted: ", args.InputText)
-		}),
 	)
 	// Add the text inputs to the login window
 	loginContainer.AddChild(usernameInput)
@@ -130,6 +121,7 @@ func makeLoginWindow(width, height int, root *widget.Container, shown *widget.Co
 		}),
 		// Button on-click handler
 		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+			player.Init(usernameInput.InputText, passwordInput.InputText)
 			removeContainer(root, loginContainer)
 			addContainer(root, shown)
 		}),

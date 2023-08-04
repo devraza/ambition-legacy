@@ -1,9 +1,13 @@
 package player
 
-import ()
+import (
+	s "github.com/devraza/ambition/frontend/server"
+	"log"
+)
 
 // The player struct
 type Player struct {
+	JwtToken    string
 	Health      int
 	MaxHealth   int
 	Defence     int
@@ -18,18 +22,38 @@ type Player struct {
 var level_gates = make(map[int]float32)
 var level_ambition = make(map[int]float32)
 
-// TODO(midnadimple): Move player initialization to server upon login
-func GetPlayer() Player {
+func NewPlayer() Player {
 	return Player{
-		Health:      100,
-		MaxHealth:   100,
-		Defence:     0,
-		Level:       1,
-		Exp:         0.0,
-		NextExp:     0.0,
-		Ambition:    0.0,               // NOTE(midnadimple): In the future this will be affected by player activity
-		MaxAmbition: level_ambition[1], // NOTE(midnadimple): In the future this will be affected by player activity
+		JwtToken: "",
+		Health: 0,
+		MaxHealth: 0,
+		Defence: 0,
+		Level: 0,
+		Exp: 0.0,
+		NextExp: 0.0,
+		Ambition: 0.0,
+		MaxAmbition: 0.0,
 	}
+}
+		
+ 
+func (p *Player) Init(name, password string) {
+	// JWT Get Token
+	jwt_token, err := s.GetUserJwtToken(name, password)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	p.JwtToken = jwt_token
+
+	// TODO(midnadimple): Get player data from server. 
+	p.Health = 100
+	p.MaxHealth = 100
+	p.Defence = 0
+	p.Level = 1
+	p.Exp = 0.0
+	p.NextExp = 0.0
+	p.Ambition = 0.0                  // NOTE(midnadimple): In the future this will be affected by player activity
+	p.MaxAmbition = level_ambition[1] // NOTE(midnadimple): In the future this will be affected by player activity
 }
 
 // Formula for XP gain - extremely simple

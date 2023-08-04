@@ -11,11 +11,8 @@ import (
 
 	// Ebitengine
 	"github.com/hajimehoshi/ebiten/v2"
-	// "github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
-
-// Initialise the test player
-var testPlayer = p.GetPlayer()
 
 // Create the `Game` struct
 type Game struct {
@@ -40,6 +37,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw the UI onto the screen
 	g.ui.Base.Draw(screen)
+	ebitenutil.DebugPrint(screen, g.activePlayer.JwtToken)
 }
 
 // Layout implements Game
@@ -64,11 +62,9 @@ func main() {
 	ebiten.SetWindowTitle(window_title)
 
 	// Initialise the game
-	game := Game{
-		// Initialise the UI
-		activePlayer: testPlayer,
-		ui:           u.UiInit(window_width, window_height),
-	}
+	game := Game{}
+	game.activePlayer = p.NewPlayer()
+	game.ui = u.UiInit(window_width, window_height, &game.activePlayer)
 
 	// Log and exit on error
 	if err := ebiten.RunGame(&game); err != nil {
