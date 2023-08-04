@@ -6,6 +6,7 @@ require (
 	github.com/devraza/ambition/frontend/player v0.0.0-00010101000000-000000000000
 	github.com/devraza/ambition/frontend/ui v0.0.0-00010101000000-000000000000
 	github.com/hajimehoshi/ebiten/v2 v2.5.5
+	github.com/joho/godotenv v1.5.1
 )
 
 require (

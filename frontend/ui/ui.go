@@ -22,13 +22,11 @@ import (
 // The UI struct
 type UI struct {
 	Base          ebitenui.UI
+	player        *p.Player
 	colors        map[string]color.RGBA
 	width, height int
 	textInput     *widget.TextInput
 }
-
-// Get the player from the `player` package
-var player = p.GetPlayer()
 
 // The `hazakura` colorscheme (default)
 var hazakura = map[string]color.RGBA{
@@ -62,9 +60,10 @@ var defaultFace, _ = makeFace(14, fonts.FiraRegular_ttf)
 var buttonImage, _ = loadButtonImage()
 
 // Function for UI initialization
-func UiInit(width, height int) UI {
+func UiInit(width, height int, player *p.Player) UI {
 	// Define the UI colors
 	ui.colors = hazakura
+	ui.player = player
 
 	// Get the window width/height
 	ui.width = width
@@ -170,7 +169,7 @@ func UiInit(width, height int) UI {
 	addContainer(leftBar, chatContainer)
 
 	// Create the login window
-	makeLoginWindow(ui.width, ui.height, root, leftBar)
+	makeLoginWindow(ui.width, ui.height, root, leftBar, player)
 
 	// Set the position and size of the left bar
 	leftBar.SetLocation(img.Rect(0, 0, int(float32(width)/3.5), height))
@@ -246,7 +245,7 @@ func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
 			},
 		),
 		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, player.Health, player.MaxHealth),
+		widget.ProgressBarOpts.Values(0, ui.player.Health, ui.player.MaxHealth),
 	)
 	parent.AddChild(health)
 	parent.AddChild(health_progressbar)
@@ -281,7 +280,7 @@ func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
 			},
 		),
 		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, int(player.Exp), int(player.NextExp)),
+		widget.ProgressBarOpts.Values(0, int(ui.player.Exp), int(ui.player.NextExp)),
 	)
 	parent.AddChild(level)
 	parent.AddChild(level_progressbar)
@@ -316,7 +315,7 @@ func makeStatsBars(parent *widget.TabBookTab, ui UI, face font.Face) {
 			},
 		),
 		// Set the min, max, and current values for each progressbar
-		widget.ProgressBarOpts.Values(0, int(player.Ambition), int(player.MaxAmbition)),
+		widget.ProgressBarOpts.Values(0, int(ui.player.Ambition), int(ui.player.MaxAmbition)),
 	)
 	parent.AddChild(ambition)
 	parent.AddChild(ambition_progressbar)
