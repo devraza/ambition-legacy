@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	_ "github.com/joho/godotenv/autoload"
-	"log"
 	"net/http"
 	"os"
+
+	// Stylish stuff
+	"github.com/charmbracelet/log"
 )
 
 type App struct {
@@ -33,7 +35,7 @@ func main() {
 
 	// Log any errors
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	a := &App{
@@ -45,6 +47,6 @@ func main() {
 		port = "7741"
 	}
 	// Log that the program has successfully started listening to the port
-	log.Println(fmt.Sprintf("Ambition backend listening to port %v", port))
+	log.Info(fmt.Sprintf("Ambition backend listening to port %v", port))
 	http.ListenAndServe(":"+port, a)
 }
