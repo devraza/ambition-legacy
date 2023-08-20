@@ -7,8 +7,13 @@ import (
 	"io"
 	"os"
 
+	// A cute logging system
+	"github.com/charmbracelet/log"
+
 	// Encryption
+	"crypto/rand"
 	"encoding/json"
+	"math/big"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
@@ -18,6 +23,11 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+// Define the configuration directories
+var userConfigDirectory, err = os.UserConfigDir()
+var serverConfigDirectory = fmt.Sprintf("%v/ambition/server", userConfigDirectory)
+var jwtPath = fmt.Sprintf("%v/jwt_secret", serverConfigDirectory)
 
 // Define the user request struct
 type UserRequest struct {
@@ -37,6 +47,30 @@ func (ur *UserRequest) Parse(req *http.Request) error {
 	return nil
 }
 
+// A function to write a randomly-generated cryptographically secure 24-character string to a file
+func makeSecret() {
+	const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
+	ret := make([]byte, 24)
+	for i := 0; i < 24; i++ {
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(characters))))
+		if err != nil {
+			log.Fatal(err)
+		}
+		ret[i] = characters[num.Int64()]
+	}
+
+	// Check if the Ambition server config folder exists, otherwise make it
+	_, err2 := os.Stat(serverConfigDirectory)
+	if os.IsNotExist(err2) {
+		log.Info("Ambition backend config folder does not exist, creating...")
+		os.MkdirAll(serverConfigDirectory, 0755)
+		log.Info("Made Ambition backend config folder!")
+	}
+
+	// Write the secret to the file
+	os.WriteFile(jwtPath, ret, 0755)
+}
+
 // Define the user handler struct
 type UserHandler struct {
 	db         *sql.DB
@@ -51,8 +85,9 @@ func NewUserHandler() (*UserHandler, error) {
 		return nil, err
 	}
 
-	// Define the JSON web token
-	jwt_secret_str := os.Getenv("JWT_SECRET")
+	// Get the JSON web token
+	jwt_secret_bytes, err := os.ReadFile(jwtPath)
+	jwt_secret_str := string(jwt_secret_bytes)
 	// Return any errors
 	if jwt_secret_str == "" {
 		return nil, errors.New("no JWT_SECRET provided in .env")
