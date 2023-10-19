@@ -2,6 +2,8 @@
 
 # Ambition
 
+> This project is on hiatus. The image I have for the future of this product is murky, but it does exist. I'll be sure to post any updates, but don't expect any for a while yet.
+
 ## About
 Ambition is a fast-paced, text-based multiplayer role-playing game.
 
