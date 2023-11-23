@@ -309,5 +309,4 @@ func (h *UserHandler) deleteUser(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, fmt.Sprintf("db: failed to delete user (%s)", err), http.StatusInternalServerError)
 		return
 	}
-
 }
