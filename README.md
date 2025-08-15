@@ -11,4 +11,4 @@ Ambition is a fast-paced, text-based multiplayer role-playing game.
 - [Adam Khan](https://github.com/krasket) - UI/UX designer
 
 ## License
-See the [LICENSE](LICENSE) for a copy of the Apache License 2.0
+See the [LICENSE](LICENSE) for a copy of the Mozilla Public License 2.0.
